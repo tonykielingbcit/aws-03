@@ -15,7 +15,6 @@ const upload = multer({ dest: "images/" });
 
 app.get("/images/:imageName", (req, res) => {
     const imageName = req.params.imageName;
-    // console.log("sending a particular image: ", imageName);
     const readStream = fs.createReadStream(`images/${imageName}`);
     readStream.pipe(res);
 });
@@ -23,20 +22,24 @@ app.get("/images/:imageName", (req, res) => {
 
 app.get("/api/images", async (req, res) => {
     const images = await getImages();
-    // console.log("returning empty... ", images);
     return res.json(images);
 });
 
 
 app.post("/api/images", upload.single("image"), async (req, res) => {
     try {
+        const errorDefaultMessage = "Issue recording image file :/. Try again later, please.";
         const description = req.body.description;
+
+        // this is to simulate an error handling on purpose
+        if (description === "***")
+            throw(errorDefaultMessage);
+
         const recordingImage = await addImage(req.file.filename, description);
 
-        if (!recordingImage || description === "***")
-            throw ("Issue recording image file :/. Try again later, please.");
+        if (!recordingImage || !recordingImage.id)
+            throw (errorDefaultMessage);
 
-        // console.log("-------------sending back: ", recordingImage);
         return res.send({ 
             id: recordingImage.id,
             file_name: recordingImage.file_name,
