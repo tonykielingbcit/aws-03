@@ -65,6 +65,7 @@ export async function rmImage(id) {
     DELETE FROM images WHERE id = ?
     `;
 
+    await pool.query("SET SQL_SAFE_UPDATES = 0");
     const [result] = await pool.query(query, [id]);
 
     const getAllImages = await getImages();
