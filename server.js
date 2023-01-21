@@ -4,7 +4,7 @@ import fs from "fs";
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { getImages, getImage, addImage } from "./database.js";
+import { getImages, getImage, addImage, rmImage } from "./database.js";
 
 const app = express();
 app.use(express.json());
@@ -45,7 +45,7 @@ app.post("/api/images", upload.single("image"), async (req, res) => {
             file_name: recordingImage.file_name,
             description: recordingImage.description,
             created: recordingImage.created,
-            message: "Image added!   \\o/" 
+            message: "Image added successfully!!!   \\o/" 
         });
 
     } catch(err) {
@@ -53,6 +53,22 @@ app.post("/api/images", upload.single("image"), async (req, res) => {
         return res.send({ error: err.message || err});
     }
 });
+
+
+app.delete("/api/images/:id", async (req, res) => {
+    try {
+        const getAllImages = await rmImage(req.params.id);
+    
+        return res.json({
+            message: "Item deleted successfully!! \\o/",
+            images: getAllImages
+        });
+    } catch(err) {
+        console.log("###Error on deleting image: ", err.message || err);
+        return({error: err.message || err});
+    }
+});
+
 
 
 // https://flaviocopes.com/fix-dirname-not-defined-es-module-scope/
