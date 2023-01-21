@@ -29,15 +29,12 @@ app.get("/api/images", async (req, res) => {
 
 
 app.post("/api/images", upload.single("image"), async (req, res) => {
-    // console.log("receiving on post: ", req.body, req.file);
-    
     try {
         const description = req.body.description;
-        const imagePath = req.file.path;
         const recordingImage = await addImage(req.file.filename, description);
-        
-        if (!recordingImage)
-            throw ("Issue recording image file");
+
+        if (!recordingImage || description === "***")
+            throw ("Issue recording image file :/. Try again later, please.");
 
         // console.log("-------------sending back: ", recordingImage);
         return res.send({ 
@@ -45,7 +42,7 @@ app.post("/api/images", upload.single("image"), async (req, res) => {
             file_name: recordingImage.file_name,
             description: recordingImage.description,
             created: recordingImage.created,
-            message: "Image added! \\o/" 
+            message: "Image added!   \\o/" 
         });
 
     } catch(err) {
@@ -61,5 +58,5 @@ const __dirname = path.dirname(__filename);
 app.use("*", (req, res) => res.sendFile(__dirname + "/public/index.html"));
 
 const port = process.env.PORT || 8080;
-app.listen(port, () => `Server running at ${port} port`);
+app.listen(port, () => console.log(`Server running at ${port} port`));
 
