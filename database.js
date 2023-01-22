@@ -52,6 +52,7 @@ export async function addImage(fileName, description) {
 
 //   const [result] = await pool.query(query, [filePath, description]);
   const [result] = await pool.query(query, [fileName, description]);
+
   const id = result.insertId
 
   return await getImage(id)
@@ -68,7 +69,5 @@ export async function rmImage(id) {
     await pool.query("SET SQL_SAFE_UPDATES = 0");
     const [result] = await pool.query(query, [id]);
 
-    const getAllImages = await getImages();
-  
-    return getAllImages;
+    return result.affectedRows;
 }

@@ -55,17 +55,29 @@ app.post("/api/images", upload.single("image"), async (req, res) => {
 });
 
 
-app.delete("/api/images/:id", async (req, res) => {
+// it removes a record
+// receive: id record
+// return: an array of records after removing
+app.delete("/api/images/rm/:id", async (req, res) => {
     try {
-        const getAllImages = await rmImage(req.params.id);
-    
-        return res.json({
-            message: "Item deleted successfully!! \\o/",
-            images: getAllImages
-        });
+        const deleteRecord = await rmImage(req.params.id);
+
+        // if delete was okay, grabs all records and return them
+        if (deleteRecord > 0) {
+            const getAllImages = await getImages();
+        
+            return res.json({
+                message: "Item deleted successfully!! \\o/",
+                images: getAllImages
+            });
+        }
+
+        // otherwise, it errors
+        throw("Issue on removing item. Please again try later.")
+
     } catch(err) {
         console.log("###Error on deleting image: ", err.message || err);
-        return({error: err.message || err});
+        return res.json({error: err.message || err});
     }
 });
 
