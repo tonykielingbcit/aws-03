@@ -26,6 +26,29 @@ app.get("/api/images", async (req, res) => {
 });
 
 
+// middleware check file's size to apply size limit
+// backend checking
+// NOT working
+// const upload = multer({ dest: "images/" }).single("image");
+
+// const checkFileSize = (req, res, next) => {
+//     console.log("req.files::: ", req.headers["content-length"]);
+
+//     const fileSize = req.headers["content-length"];
+//     const oneMB = 1048576;
+
+//     if (fileSize > oneMB) {
+//         console.log("opsssssssss");
+//         // it gets here, but does not return the message below
+//         return res.json({error: `Maximum file size is 1MB. Your current file is about ${Math.round(fileSize / oneMB)}MB volume.`});
+//     }
+    
+//     upload();
+//     next();
+
+// }
+
+
 app.post("/api/images", upload.single("image"), async (req, res) => {
     try {
         const errorDefaultMessage = "Issue recording image file :/. Try again later, please.";
@@ -50,7 +73,7 @@ app.post("/api/images", upload.single("image"), async (req, res) => {
 
     } catch(err) {
         console.log("###Error - adding image: ", err.message || err);
-        return res.send({ error: err.message || err});
+        return res.send({ error: err.message || err });
     }
 });
 
